@@ -1,0 +1,223 @@
+{
+  "n": 30,
+  "tp": 13,
+  "fp": 2,
+  "tn": 13,
+  "fn": 2,
+  "precision": 0.8666666666666667,
+  "recall": 0.8666666666666667,
+  "f1": 0.8666666666666667,
+  "accuracy": 0.8666666666666667,
+  "details": [
+    {
+      "id": "14052",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context provided, and the answer adequately addresses the question about cooking a frozen pork loin roast."
+    },
+    {
+      "id": "16698",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "The answer correctly states that it is unable to answer the question based on the provided context."
+    },
+    {
+      "id": "15943",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context, and the answer adequately addresses the question on how to treat meningitis."
+    },
+    {
+      "id": "17585",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer contains several claims that are not supported by the context, particularly regarding the positioning of the dog and the implications of that position. Additionally, the answer does not adequately answer the question as it introduces unsupported claims."
+    },
+    {
+      "id": "13310",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context provided, accurately describing Swiss chard."
+    },
+    {
+      "id": "14675",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context, and the answer adequately addresses the question about determining if windows need replacing."
+    },
+    {
+      "id": "12721",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer claims an inability to answer, but the context provides several methods to remove nail polish without remover, such as soaking in warm soapy water or using glue and scratching."
+    },
+    {
+      "id": "12226",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "The claim that Kenneth Williams passed away is supported by the context, which confirms that he is not alive."
+    },
+    {
+      "id": "13189",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context provided, and the answer adequately addresses the question on how to cook a pork sirloin roast in the oven."
+    },
+    {
+      "id": "14587",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context, and the answer adequately addresses the question on how to sell items on eBay."
+    },
+    {
+      "id": "13174",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The claim about Econo Lodge Kissimmee being a cheap hotel in Florida is unsupported by the context, as it is not listed among the cheap Florida hotels."
+    },
+    {
+      "id": "14222",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims in the answer are supported by the context, and the answer adequately addresses the question about how to make mustard greens."
+    },
+    {
+      "id": "13367",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer includes a claim about using a gentle wine cleaner or decanter to remove stains, which is not supported by the context provided."
+    },
+    {
+      "id": "17084",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer includes claims about specific placements of facial features (eyes, eyebrows, nose) that are not supported by the context provided."
+    },
+    {
+      "id": "15688",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The claim about average humidity levels of 70% to 90% is not supported by the context, which does not provide specific humidity percentages."
+    },
+    {
+      "id": "12234",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims in the answer are supported by the context, accurately reflecting the definition and importance of professional job skills."
+    },
+    {
+      "id": "14432",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer contains accurate claims about the eligibility criteria and application process for becoming an FBI agent, but it introduces unsupported information about the training duration and location at Quantico Academy."
+    },
+    {
+      "id": "16240",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "While some claims are supported by the context, several specific claims about SMART goals, digital marketing strategies, and the role of print marketing are not directly supported or mentioned in the context."
+    },
+    {
+      "id": "17613",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer includes a claim about consulting a professional plumber, which is not supported by the context. Additionally, the statement 'Unable to answer based on given passages' is incorrect as the context provides sufficient information to answer the question."
+    },
+    {
+      "id": "14562",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims in the answer are supported by the context, providing a complete and accurate method for grilling chicken thighs on a gas grill."
+    },
+    {
+      "id": "16918",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "The claim accurately reflects the information provided in the context regarding the probability of eye color inheritance from brown-eyed parents."
+    },
+    {
+      "id": "14321",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "While the answer accurately reflects some key points from the context, it introduces several claims about the importance of diligence, gaining experience through internships, and networking that are not supported by the provided context."
+    },
+    {
+      "id": "17696",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer includes steps that are not supported by the context, such as covering the foil packets with another sheet of aluminum foil and grilling for 10-15 minutes, which are not mentioned in the provided context."
+    },
+    {
+      "id": "12028",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The claims about the benefits of placing an ice cube on the neck are supported by the context, but the claims regarding ice baths and their benefits are not mentioned in the context, leading to baseless information."
+    },
+    {
+      "id": "12656",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer includes steps that are not supported by the context, specifically the claims about checking the pork roast periodically during cooking and letting it rest before slicing and serving, which are not mentioned in the context."
+    },
+    {
+      "id": "13070",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer contains a claim about the normal range for PSA levels varying by age and medical history, which is not supported by the context provided."
+    },
+    {
+      "id": "15639",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context, providing an accurate definition and examples of pulse vegetables."
+    },
+    {
+      "id": "13133",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context provided, and the answer adequately addresses the question on how to soften sugar."
+    },
+    {
+      "id": "12688",
+      "actual_is_hallucinated": false,
+      "predicted_is_hallucinated": false,
+      "predicted_label": "No Hallucination",
+      "rationale": "All claims made in the answer are supported by the context provided, and the answer adequately addresses the question regarding the benefits of each vitamin."
+    },
+    {
+      "id": "15242",
+      "actual_is_hallucinated": true,
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The claim that money contributed to an HSA can be withdrawn at any time without penalty is incorrect; withdrawals for non-qualified expenses incur taxes and penalties. Therefore, this claim is unsupported by the context."
+    }
+  ]
+}

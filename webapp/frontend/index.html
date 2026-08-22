@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAG Benchmark Console</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      <div>
+        <h1>RAG Prompt Strategy Benchmark</h1>
+        <p>Zero-shot &middot; Few-shot &middot; Chain-of-Thought &middot; Structured Output</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="icon-btn" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>
+      </button>
+      <div class="conn-status offline" id="conn-status"><span class="dot"></span><span id="conn-label">Connecting&hellip;</span></div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <section class="panel" id="run-panel">
+        <div class="panel-head"><h2>Run configuration</h2><span class="status-pill idle" id="status-pill">Idle</span></div>
+        <div id="api-key-warning" class="warning-banner" style="display:none;">
+          <span>&#9888;</span><span>No <code>OPENAI_API_KEY</code> found in <code>.env</code>. Add one and restart the server before running.</span>
+        </div>
+        <div class="field">
+          <label for="sample-size">Eval sample size (questions per strategy)</label>
+          <input type="number" id="sample-size" min="1" max="500" value="60">
+        </div>
+        <div class="field">
+          <label for="calibration-size">Judge calibration size</label>
+          <input type="number" id="calibration-size" min="0" max="200" value="30">
+        </div>
+        <div class="field">
+          <label>Strategies to run</label>
+          <div class="check-grid" id="strategy-checks"></div>
+        </div>
+        <hr class="divider">
+        <div class="field">
+          <div class="check-grid">
+            <label class="check-row"><input type="checkbox" id="use-fixture"> Use offline fixture (no download / smoke test)</label>
+            <label class="check-row"><input type="checkbox" id="skip-ragas"> Skip RAGAS scoring</label>
+            <label class="check-row"><input type="checkbox" id="skip-calibration"> Skip judge calibration</label>
+          </div>
+        </div>
+        <button class="run-btn" id="run-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+          Run pipeline
+        </button>
+        <div id="error-banner" class="error-banner" style="display:none;"></div>
+      </section>
+
+      <section class="panel" id="stepper-panel">
+        <div class="panel-head"><h2>Pipeline</h2></div>
+        <div class="stepper" id="stepper-steps"></div>
+      </section>
+
+      <section class="panel" id="calibration-panel">
+        <div class="panel-head"><h2>Judge calibration</h2><span class="hint">vs RAGTruth labels</span></div>
+        <div class="stat-grid">
+          <div class="stat-tile"><div class="stat-label">Precision</div><div class="stat-value" id="cal-precision">&mdash;</div></div>
+          <div class="stat-tile"><div class="stat-label">Recall</div><div class="stat-value" id="cal-recall">&mdash;</div></div>
+          <div class="stat-tile"><div class="stat-label">F1</div><div class="stat-value" id="cal-f1">&mdash;</div></div>
+          <div class="stat-tile"><div class="stat-label">Accuracy</div><div class="stat-value" id="cal-accuracy">&mdash;</div></div>
+        </div>
+        <p class="cal-note">The judge is run against RAGTruth's own human-labeled answers before grading this pipeline's output, so you can see how much to trust it.</p>
+      </section>
+    </aside>
+
+    <section class="content">
+      <section class="panel" id="feed-panel">
+        <div class="panel-head"><h2>Live feed</h2><span class="hint" id="feed-hint">waiting for a run&hellip;</span></div>
+        <div class="feed-list" id="feed-list"><div class="feed-empty">No activity yet. Configure a run and click &ldquo;Run pipeline&rdquo;.</div></div>
+      </section>
+
+      <section class="panel" id="charts-panel">
+        <div class="panel-head"><h2>Results</h2><span class="hint">updates live as each strategy finishes</span></div>
+        <div class="legend" id="legend"></div>
+        <div class="chart-grid" id="chart-grid"></div>
+        <div class="radar-wrap"><svg id="radar-svg" viewBox="0 0 380 340" role="img" aria-label="Radar comparison of all strategies"></svg></div>
+      </section>
+
+      <section class="panel" id="browse-panel">
+        <div class="panel-head"><h2>Browse answers</h2><span class="hint">click a row for full detail</span></div>
+        <div class="tabs" id="browse-tabs"></div>
+        <div class="table-wrap">
+          <table class="browse">
+            <thead><tr><th>#</th><th>Question</th><th>Judge label</th><th>Correct</th><th>Latency</th><th>Tokens</th></tr></thead>
+            <tbody id="browse-tbody"></tbody>
+          </table>
+        </div>
+        <div id="browse-empty" class="browse-empty">No results yet for this strategy.</div>
+        <div id="browse-detail"></div>
+      </section>
+    </section>
+  </main>
+</div>
+<script src="/app.js"></script>
+</body>
+</html>
