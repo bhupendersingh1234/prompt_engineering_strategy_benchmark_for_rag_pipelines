@@ -78,11 +78,15 @@ project-1/
 │   ├── run_benchmark.py         # main experiment runner (all 4 strategies)
 │   └── generate_report.py       # results/summary.csv -> results/charts/*.png
 ├── scripts/
-│   └── run_pipeline.py          # one-shot: data_loader -> ingest -> benchmark -> report
+│   ├── run_pipeline.py          # one-shot: data_loader -> ingest -> benchmark -> report
+│   └── run_webapp.py            # launches the web GUI (see §13)
+├── webapp/
+│   ├── backend/                 # FastAPI app + WebSocket, wraps src/ directly
+│   └── frontend/                # vanilla HTML/JS/CSS control panel
 ├── tests/                       # offline unit tests, no API key required
 │   └── fixtures/ragtruth_fixture.jsonl
-├── data/{raw,processed}/        # generated (gitignored)
-└── results/{raw_outputs,charts}/  # generated (gitignored)
+├── data/processed/              # generated; committed (small) so results are reproducible-checkable
+└── results/{raw_outputs,charts}/  # generated; committed — the actual run in §11
 ```
 
 ## 5. Setup
@@ -198,19 +202,45 @@ those labels can't be looked up directly for our new answers. Instead:
 - `radar_comparison.png` — all strategies overlaid on one radar (accuracy, faithfulness,
   answer relevancy, and *1 − hallucination_rate* so "further out" always means "better").
 
-The architecture diagram in §2 and mock versions of these comparison charts are also
-published as a companion visual artifact (see project chat) for a quick look before running
-the real benchmark.
+The same charts render live, client-side, in the web GUI (§13) as each strategy finishes.
 
-## 10. Expected Outcome
+## 10. Expected Outcome (hypothesis, going in)
 
-Chain-of-Thought and Structured Output are expected to reduce hallucination rate relative to
+Chain-of-Thought and Structured Output were expected to reduce hallucination rate relative to
 Zero-shot (forcing explicit claim-checking / verbatim-quote citation), at the cost of higher
-token usage, latency, and $/query. Few-shot is expected to land between Zero-shot and the
-other two on both axes. `results/summary.csv` and the charts in §9 are what confirm or
-refute this once the benchmark is actually run against the full RAGTruth QA sample.
+token usage, latency, and $/query, with Few-shot landing between Zero-shot and the other two
+on both axes. §11 is what actually happened when the benchmark was run.
 
-## 11. Known Limitations
+## 11. Results (n=60 questions, judge calibration n=30)
+
+Judge calibration against RAGTruth's human hallucination labels, before trusting the judge to
+grade the pipeline's own answers (see §8): **precision 0.87 / recall 0.87 / F1 0.87 / accuracy
+0.87** (13 true positives, 2 false positives, 13 true negatives, 2 false negatives —
+`results/judge_calibration.json`).
+
+| Strategy | Accuracy | Hallucination Rate | Faithfulness | Relevancy | Latency | Tokens | Cost/query |
+|---|---|---|---|---|---|---|---|
+| Zero-shot | 0.683 | 0.183 | 0.755 | 0.627 | 1.58s | 454 | $0.000101 |
+| Few-shot | **0.717** | 0.117 | 0.844 | 0.725 | 1.80s | 655 | $0.000137 |
+| Chain-of-Thought | 0.700 | 0.167 | 0.801 | 0.595 | 3.23s | 620 | $0.000172 |
+| Structured Output | 0.683 | **0.100** | **0.858** | **0.743** | 2.99s | 834 | $0.000193 |
+
+Full per-question outputs (including the judge's per-answer rationale) are in
+`results/raw_outputs/<strategy>.jsonl`; charts are in `results/charts/`.
+
+**What actually happened, vs. the §10 hypothesis:**
+- **Structured Output does win on grounding** — lowest hallucination rate, highest
+  Faithfulness and Answer Relevancy of the four — but it has the *lowest* accuracy tied with
+  Zero-shot. Being forced to cite verbatim supporting quotes appears to make it decline or
+  hedge on questions it could otherwise have answered correctly, trading accuracy for safety.
+- **Chain-of-Thought does not beat Few-shot on hallucination rate** (0.167 vs. 0.117) despite
+  roughly double the latency and comparable token cost — the explicit reasoning step didn't
+  translate into fewer ungrounded claims here, which contradicts the going-in hypothesis and
+  is worth discussing rather than smoothing over.
+- **Few-shot is the strongest all-around strategy** in this run: best accuracy, second-best
+  hallucination rate, and far cheaper than Chain-of-Thought or Structured Output.
+
+## 12. Known Limitations
 
 - RAGAS's exact Python API has shifted across recent releases; `compute_ragas_metrics`
   catches and logs (rather than crashes on) API drift so one broken metric doesn't take down
@@ -220,4 +250,25 @@ refute this once the benchmark is actually run against the full RAGTruth QA samp
   why §8's calibration step exists and why its precision/recall/F1 is reported alongside the
   main results, not hidden.
 - `EVAL_SAMPLE_SIZE` / `CALIBRATION_SAMPLE_SIZE` in `config.py` default to 60 / 30 to keep
-  API cost and runtime modest; increase them for a more statistically robust comparison.
+  API cost and runtime modest. At n=60, the §11 hallucination-rate gaps between strategies
+  (10–18%) are on the order of a few questions each — real, but not large enough to treat as
+  precise percentages. Re-run with a larger `--sample-size` before leaning on the exact
+  numbers rather than the direction of the effect.
+
+## 13. Web GUI
+
+`webapp/` is a local control panel for the pipeline: pick sample size / strategies, click
+Run, and watch progress live over a WebSocket — a pipeline stepper (data → ingest →
+calibration → each strategy → report), a scrolling feed of each question as it's answered and
+judged, live-updating charts (same metrics as §9, built client-side from `/api/summary`), the
+judge calibration stats, and a "Browse answers" tab to click into any question's full
+retrieved context, answer, and judge rationale.
+
+```powershell
+python scripts/run_webapp.py
+```
+
+Then open `http://127.0.0.1:8000/`. This calls the real OpenAI API exactly like the CLI
+(§6) — a run through the GUI costs the same as `python -m src.run_benchmark`. Only one
+pipeline run can be in flight at a time; the backend (`webapp/backend/`) reuses `src/`
+directly, it doesn't reimplement the pipeline.
