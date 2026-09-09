@@ -16,11 +16,21 @@ load_dotenv()
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
+# RAG_WORKDIR redirects every generated artifact (processed data, the Chroma
+# vector store, results) under an alternate root instead of the project
+# directory. Use this for demos / live runs you do NOT want to overwrite the
+# real committed results with -- e.g.
+#   $env:RAG_WORKDIR = "demo_workspace"; python scripts/run_webapp.py
+# Leave unset for the real thing; the defaults (project-root-relative) are
+# unchanged.
 ROOT_DIR = Path(__file__).resolve().parent
-DATA_RAW_DIR = ROOT_DIR / "data" / "raw"
-DATA_PROCESSED_DIR = ROOT_DIR / "data" / "processed"
-CHROMA_PERSIST_DIR = ROOT_DIR / "chroma_store"
-RESULTS_DIR = ROOT_DIR / "results"
+_workdir_override = os.getenv("RAG_WORKDIR")
+WORK_ROOT = (ROOT_DIR / _workdir_override).resolve() if _workdir_override else ROOT_DIR
+
+DATA_RAW_DIR = WORK_ROOT / "data" / "raw"
+DATA_PROCESSED_DIR = WORK_ROOT / "data" / "processed"
+CHROMA_PERSIST_DIR = WORK_ROOT / "chroma_store"
+RESULTS_DIR = WORK_ROOT / "results"
 RAW_OUTPUTS_DIR = RESULTS_DIR / "raw_outputs"
 CHARTS_DIR = RESULTS_DIR / "charts"
 

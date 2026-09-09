@@ -6,5 +6,7 @@ venv/
 data/raw/*
 !data/raw/.gitkeep
 chroma_store/
+demo_workspace/
 .pytest_cache/
 *.egg-info/
+~$*
