@@ -1,27 +1,27 @@
 {
   "n": 30,
   "tp": 13,
-  "fp": 2,
-  "tn": 13,
+  "fp": 3,
+  "tn": 12,
   "fn": 2,
-  "precision": 0.8666666666666667,
+  "precision": 0.8125,
   "recall": 0.8666666666666667,
-  "f1": 0.8666666666666667,
-  "accuracy": 0.8666666666666667,
+  "f1": 0.8387096774193549,
+  "accuracy": 0.8333333333333334,
   "details": [
     {
       "id": "14052",
       "actual_is_hallucinated": false,
-      "predicted_is_hallucinated": false,
-      "predicted_label": "No Hallucination",
-      "rationale": "All claims made in the answer are supported by the context provided, and the answer adequately addresses the question about cooking a frozen pork loin roast."
+      "predicted_is_hallucinated": true,
+      "predicted_label": "Baseless Information",
+      "rationale": "The answer contains a claim about cooking time that is not supported by the context, specifically the statement about cooking for 'about 1.5 to 3 hours depending on its size, or about 20-30 minutes per pound,' which is not explicitly mentioned in the context."
     },
     {
       "id": "16698",
       "actual_is_hallucinated": false,
       "predicted_is_hallucinated": false,
       "predicted_label": "No Hallucination",
-      "rationale": "The answer correctly states that it is unable to answer the question based on the provided context."
+      "rationale": "The answer correctly states that it is unable to answer the question based on the provided context, which does not specify what dermatologists use on their skin."
     },
     {
       "id": "15943",
@@ -35,7 +35,7 @@
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The answer contains several claims that are not supported by the context, particularly regarding the positioning of the dog and the implications of that position. Additionally, the answer does not adequately answer the question as it introduces unsupported claims."
+      "rationale": "The answer contains several claims that are not supported by the context, particularly regarding the positioning of the dog and the implications of that position, as well as the suggestion to seek veterinary help."
     },
     {
       "id": "13310",
@@ -49,14 +49,14 @@
       "actual_is_hallucinated": false,
       "predicted_is_hallucinated": false,
       "predicted_label": "No Hallucination",
-      "rationale": "All claims made in the answer are supported by the context, and the answer adequately addresses the question about determining if windows need replacing."
+      "rationale": "All claims made in the answer are supported by the context, which discusses signs of window wear and the importance of consulting Terry Meany's book."
     },
     {
       "id": "12721",
       "actual_is_hallucinated": false,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The answer claims an inability to answer, but the context provides several methods to remove nail polish without remover, such as soaking in warm soapy water or using glue and scratching."
+      "rationale": "The answer claims an inability to answer, but the context provides several methods to remove nail polish without remover, such as soaking in warm soapy water or using glue."
     },
     {
       "id": "12226",
@@ -91,49 +91,49 @@
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": false,
       "predicted_label": "No Hallucination",
-      "rationale": "All claims in the answer are supported by the context, and the answer adequately addresses the question about how to make mustard greens."
+      "rationale": "All claims in the answer are supported by the context, which provides a method for cooking mustard greens and notes the lack of instructions for growing them from scratch."
     },
     {
       "id": "13367",
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The answer includes a claim about using a gentle wine cleaner or decanter to remove stains, which is not supported by the context provided."
+      "rationale": "The answer includes a claim about using a gentle wine cleaner or decanter to remove stains, which is not supported by the context."
     },
     {
       "id": "17084",
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The answer includes claims about specific placements of facial features (eyes, eyebrows, nose) that are not supported by the context provided."
+      "rationale": "The answer includes claims about specific placements of facial features (eyes, eyebrows, nose) that are not supported by the context, which only discusses general guidelines for drawing faces."
     },
     {
       "id": "15688",
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The claim about average humidity levels of 70% to 90% is not supported by the context, which does not provide specific humidity percentages."
+      "rationale": "The claim about average humidity levels of 70% to 90% is not supported by the context, which does not provide specific humidity figures."
     },
     {
       "id": "12234",
       "actual_is_hallucinated": false,
       "predicted_is_hallucinated": false,
       "predicted_label": "No Hallucination",
-      "rationale": "All claims in the answer are supported by the context, accurately reflecting the definition and importance of professional job skills."
+      "rationale": "All claims made in the answer are supported by the context, accurately reflecting the definition and importance of professional job skills."
     },
     {
       "id": "14432",
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The answer contains accurate claims about the eligibility criteria and application process for becoming an FBI agent, but it introduces unsupported information about the training duration and location at Quantico Academy."
+      "rationale": "The answer contains accurate claims about the eligibility criteria and application process for becoming an FBI agent, but it introduces unsupported specifics about the training duration and location (two weeks at Quantico Academy) that are not mentioned in the context."
     },
     {
       "id": "16240",
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "While some claims are supported by the context, several specific claims about SMART goals, digital marketing strategies, and the role of print marketing are not directly supported or mentioned in the context."
+      "rationale": "While some claims are supported by the context, several specific claims about SMART goals, detailed digital marketing strategies, and the role of print marketing are unsupported or not explicitly mentioned in the context."
     },
     {
       "id": "17613",
@@ -161,7 +161,7 @@
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "While the answer accurately reflects some key points from the context, it introduces several claims about the importance of diligence, gaining experience through internships, and networking that are not supported by the provided context."
+      "rationale": "The answer contains several claims that are not supported by the context, such as the emphasis on small mistakes leading to significant losses, the recommendation for internships or entry-level positions, and the importance of networking, which are not mentioned in the context."
     },
     {
       "id": "17696",
@@ -175,14 +175,14 @@
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The claims about the benefits of placing an ice cube on the neck are supported by the context, but the claims regarding ice baths and their benefits are not mentioned in the context, leading to baseless information."
+      "rationale": "While the claims about the benefits of placing an ice cube on the neck are supported by the context, the statements regarding ice baths and their benefits are not mentioned in the context, leading to baseless information."
     },
     {
       "id": "12656",
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The answer includes steps that are not supported by the context, specifically the claims about checking the pork roast periodically during cooking and letting it rest before slicing and serving, which are not mentioned in the context."
+      "rationale": "The answer includes steps that are not supported by the context, such as checking the pork roast periodically during cooking and letting it rest before slicing, which are not mentioned in the context."
     },
     {
       "id": "13070",
@@ -210,14 +210,14 @@
       "actual_is_hallucinated": false,
       "predicted_is_hallucinated": false,
       "predicted_label": "No Hallucination",
-      "rationale": "All claims made in the answer are supported by the context provided, and the answer adequately addresses the question regarding the benefits of each vitamin."
+      "rationale": "All claims made in the answer are supported by the context provided, and the answer adequately summarizes the benefits of each vitamin as requested."
     },
     {
       "id": "15242",
       "actual_is_hallucinated": true,
       "predicted_is_hallucinated": true,
       "predicted_label": "Baseless Information",
-      "rationale": "The claim that money contributed to an HSA can be withdrawn at any time without penalty is incorrect; withdrawals for non-qualified expenses incur taxes and penalties. Therefore, this claim is unsupported by the context."
+      "rationale": "The claim that the money contributed to an HSA can be withdrawn at any time without penalty is unsupported by the context, as it does not specify that there are no penalties for withdrawal, especially for non-qualified expenses."
     }
   ]
 }

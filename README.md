@@ -214,31 +214,32 @@ on both axes. §11 is what actually happened when the benchmark was run.
 ## 11. Results (n=60 questions, judge calibration n=30)
 
 Judge calibration against RAGTruth's human hallucination labels, before trusting the judge to
-grade the pipeline's own answers (see §8): **precision 0.87 / recall 0.87 / F1 0.87 / accuracy
-0.87** (13 true positives, 2 false positives, 13 true negatives, 2 false negatives —
-`results/judge_calibration.json`).
+grade the pipeline's own answers (see §8): **precision 0.81 / recall 0.87 / F1 0.84 / accuracy
+0.83** (`results/judge_calibration.json`).
 
 | Strategy | Accuracy | Hallucination Rate | Faithfulness | Relevancy | Latency | Tokens | Cost/query |
 |---|---|---|---|---|---|---|---|
-| Zero-shot | 0.683 | 0.183 | 0.755 | 0.627 | 1.58s | 454 | $0.000101 |
-| Few-shot | **0.717** | 0.117 | 0.844 | 0.725 | 1.80s | 655 | $0.000137 |
-| Chain-of-Thought | 0.700 | 0.167 | 0.801 | 0.595 | 3.23s | 620 | $0.000172 |
-| Structured Output | 0.683 | **0.100** | **0.858** | **0.743** | 2.99s | 834 | $0.000193 |
+| Zero-shot | 0.667 | 0.250 | 0.743 | 0.625 | 1.80s | 453 | $0.000101 |
+| Few-shot | 0.700 | 0.150 | 0.829 | 0.714 | 1.65s | 653 | $0.000136 |
+| Chain-of-Thought | **0.767** | 0.183 | 0.744 | 0.537 | 2.79s | 612 | $0.000167 |
+| Structured Output | 0.717 | **0.100** | **0.866** | **0.744** | 3.10s | 830 | $0.000191 |
 
 Full per-question outputs (including the judge's per-answer rationale) are in
 `results/raw_outputs/<strategy>.jsonl`; charts are in `results/charts/`.
 
-**What actually happened, vs. the §10 hypothesis:**
-- **Structured Output does win on grounding** — lowest hallucination rate, highest
-  Faithfulness and Answer Relevancy of the four — but it has the *lowest* accuracy tied with
-  Zero-shot. Being forced to cite verbatim supporting quotes appears to make it decline or
-  hedge on questions it could otherwise have answered correctly, trading accuracy for safety.
-- **Chain-of-Thought does not beat Few-shot on hallucination rate** (0.167 vs. 0.117) despite
-  roughly double the latency and comparable token cost — the explicit reasoning step didn't
-  translate into fewer ungrounded claims here, which contradicts the going-in hypothesis and
-  is worth discussing rather than smoothing over.
-- **Few-shot is the strongest all-around strategy** in this run: best accuracy, second-best
-  hallucination rate, and far cheaper than Chain-of-Thought or Structured Output.
+**This is the second independent n=60 run** (the first is preserved in git history at commit
+`feeea63`). Comparing the two is more informative than either run alone:
+
+- **Structured Output's grounding advantage is robust** — lowest hallucination rate in *both*
+  runs (exactly 0.100 both times), and the ranking Structured < Few-shot < Chain-of-Thought <
+  Zero-shot on hallucination rate held in both. This looks like a real effect, not noise.
+- **Which strategy has the best accuracy is NOT stable across runs** — Few-shot led the first
+  run (0.717); Chain-of-Thought leads this one (0.767). Reporting whichever run happens to be
+  current as "the answer" would be misleading — this instability is exactly why §12 lists
+  statistical significance / confidence intervals as unfinished work rather than a formality.
+- **Zero-shot is consistently the weakest strategy** — highest hallucination rate in both runs
+  and lowest accuracy in this one. The most repeatable finding here is simply that prompting
+  strategy matters at all, which was the project's starting premise.
 
 ## 12. Known Limitations
 
