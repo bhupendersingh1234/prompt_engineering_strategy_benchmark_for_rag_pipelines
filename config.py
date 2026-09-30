@@ -49,7 +49,6 @@ CALIBRATION_SAMPLE_SIZE = 30         # examples used to sanity-check the halluci
 RANDOM_SEED = 42
 
 # Chunking (control variable — identical for every strategy)
-
 CHUNK_SIZE = 500
 CHUNK_OVERLAP = 50
 
