@@ -19,10 +19,19 @@ All 15 references were verified via WebFetch/WebSearch against arXiv, ACL
 Anthology, NeurIPS Proceedings, or ICLR OpenReview during authoring -- see
 LITERATURE below for the paper-by-paper sourcing.
 
+Results (the table, chart images, and judge-calibration stats) are read
+live from a results directory rather than hardcoded, so re-running this
+after a fresh benchmark run just needs --results-dir pointed at the new
+data -- no hand-editing numbers in this file.
+
 Usage:
     python presentation/fill_review2_template.py
+    python presentation/fill_review2_template.py --results-dir demo_workspace/results --out review_2_updated
 """
+import argparse
 import copy
+import csv
+import json
 from pathlib import Path
 
 from pptx import Presentation
@@ -31,10 +40,20 @@ from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.oxml.ns import qn
 
+_ap = argparse.ArgumentParser()
+_ap.add_argument("--results-dir", default="results",
+                  help="Directory containing summary.csv, judge_calibration.json, charts/ "
+                       "(relative to the project root). Default: results (the real, "
+                       "committed benchmark). Point at demo_workspace/results for a demo run.")
+_ap.add_argument("--out", default="review-2-ppt",
+                  help="Output filename (without .pptx), saved into presentation/.")
+_args = _ap.parse_args()
+
 ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_PATH = ROOT / "presentation" / "Review-2.pptx"
-OUT_PATH = ROOT / "presentation" / "review-2-ppt.pptx"
-CHARTS_DIR = ROOT / "results" / "charts"
+OUT_PATH = ROOT / "presentation" / f"{_args.out}.pptx"
+RESULTS_DIR = ROOT / _args.results_dir
+CHARTS_DIR = RESULTS_DIR / "charts"
 
 # ---------------------------------------------------------------------------
 # Template's own palette -- read off its existing runs, not invented
@@ -579,12 +598,48 @@ print("Slide 5 (implementation) filled.")
 # ===========================================================================
 # SLIDE 6 -- Results & Analysis (75%) -- the real, completed benchmark
 # ===========================================================================
-RESULTS = [
-    ("Zero-shot", 0.683, 0.183, 0.755, 1.58, 0.000101),
-    ("Few-shot", 0.717, 0.117, 0.844, 1.80, 0.000137),
-    ("Chain-of-Thought", 0.700, 0.167, 0.801, 3.23, 0.000172),
-    ("Structured Output", 0.683, 0.100, 0.858, 2.99, 0.000193),
-]
+STRATEGY_LABELS = {
+    "zero_shot": "Zero-shot", "few_shot": "Few-shot",
+    "chain_of_thought": "Chain-of-Thought", "structured_output": "Structured Output",
+}
+STRATEGY_ORDER = ["zero_shot", "few_shot", "chain_of_thought", "structured_output"]
+
+
+def load_results(results_dir: Path):
+    path = results_dir / "summary.csv"
+    if not path.exists():
+        raise FileNotFoundError(f"{path} not found -- run the benchmark (or point --results-dir "
+                                 f"at a directory that has summary.csv) before building this deck.")
+    rows = {}
+    with open(path, newline="", encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            rows[row["strategy"]] = row
+    out = []
+    for key in STRATEGY_ORDER:
+        r = rows[key]
+        out.append((
+            STRATEGY_LABELS[key],
+            float(r["accuracy"]), float(r["hallucination_rate"]),
+            float(r["ragas_faithfulness"]), float(r["avg_latency_seconds"]),
+            float(r["avg_cost_usd"]),
+        ))
+    eval_n = int(rows[STRATEGY_ORDER[0]]["n"])
+    return out, eval_n
+
+
+def load_calibration(results_dir: Path):
+    path = results_dir / "judge_calibration.json"
+    if not path.exists():
+        raise FileNotFoundError(f"{path} not found.")
+    d = json.loads(path.read_text(encoding="utf-8"))
+    return d["n"], d["precision"], d["recall"], d["f1"], d["accuracy"]
+
+
+RESULTS, EVAL_N = load_results(RESULTS_DIR)
+CAL_N, CAL_P, CAL_R, CAL_F1, CAL_ACC = load_calibration(RESULTS_DIR)
+print(f"Loaded results from {RESULTS_DIR} -- calibration n={CAL_N}, "
+      f"P={CAL_P:.2f} R={CAL_R:.2f} F1={CAL_F1:.2f} Acc={CAL_ACC:.2f}")
+
 s = slide_results1
 res_tbl = s.shapes.add_table(5, 6, Inches(0.6), Inches(1.55), Inches(12.1), Inches(2.35)).table
 for ci, w in enumerate([Inches(2.4), Inches(1.7), Inches(2.0), Inches(1.9), Inches(1.7), Inches(2.4)]):
@@ -597,9 +652,9 @@ for i, (name, acc, hal, faith, lat, cost) in enumerate(RESULTS):
                    [name, f"{acc:.3f}", f"{hal:.3f}", f"{faith:.3f}", f"{lat:.2f}s", f"${cost:.6f}"],
                    font_size=11)
 
-add_textbox(s, Inches(0.6), Inches(4.1), Inches(5.5), Inches(0.3),
-            "Judge calibration (n=30, vs. RAGTruth human labels):", size=12.5, bold=True, color=NAVY)
-cal_metrics = [("Precision", "0.87"), ("Recall", "0.87"), ("F1", "0.87"), ("Accuracy", "0.87")]
+add_textbox(s, Inches(0.6), Inches(4.1), Inches(6.3), Inches(0.3),
+            f"Judge calibration (n={CAL_N}, vs. RAGTruth human labels):", size=12.5, bold=True, color=NAVY)
+cal_metrics = [("Precision", f"{CAL_P:.2f}"), ("Recall", f"{CAL_R:.2f}"), ("F1", f"{CAL_F1:.2f}"), ("Accuracy", f"{CAL_ACC:.2f}")]
 cw_, ch_, gap_ = 1.3, 1.0, 0.18
 for i, (label, val) in enumerate(cal_metrics):
     x = 0.6 + i * (cw_ + gap_)
@@ -615,7 +670,7 @@ if chart_path.exists():
     ch_h = 2.55
     s.shapes.add_picture(str(chart_path), Inches(7.6), Inches(4.1), height=Inches(ch_h))
 add_textbox(s, Inches(0.6), Inches(6.65), Inches(11.9), Inches(0.35),
-            "n = 60 questions per strategy \u2014 real, completed benchmark run, not illustrative.",
+            f"n = {EVAL_N} questions per strategy \u2014 real, completed benchmark run, not illustrative.",
             size=10.5, italic=True, color=MUTED)
 print("Slide 6 (results 75%) filled.")
 
@@ -645,9 +700,12 @@ findings_box = add_textbox(s, Inches(0.6), Inches(5.1), Inches(11.9), Inches(1.8
 tf = findings_box.text_frame
 tf.word_wrap = True
 findings = [
-    ("Structured Output wins on grounding ", "(lowest hallucination, highest Faithfulness/Relevancy) but has the lowest accuracy \u2014 forcing verbatim citation makes it hedge on answerable questions."),
-    ("Chain-of-Thought does not beat Few-shot ", "on hallucination rate (16.7% vs 11.7%) despite ~2x the latency \u2014 contradicts the going-in hypothesis, and is reported honestly rather than smoothed over."),
-    ("Few-shot is the strongest all-around strategy ", "in this run: best accuracy, second-best hallucination rate, far cheaper than CoT or Structured Output."),
+    ("Structured Output's grounding advantage is robust across two independent runs \u2014 ",
+     "lowest hallucination rate both times (10.0% exactly, both runs), and the ranking Structured < Few-shot < Chain-of-Thought < Zero-shot on hallucination rate held in both."),
+    ("Which strategy has the best accuracy is NOT stable across runs \u2014 ",
+     "Few-shot led the first n=60 run (71.7%); Chain-of-Thought leads this run (76.7%). That instability is itself the evidence motivating the statistical-significance work still remaining, not a settled result yet."),
+    ("Zero-shot is consistently the weakest strategy \u2014 ",
+     "highest hallucination rate in both runs and lowest accuracy in this run \u2014 the strongest and most repeatable finding is simply that prompting strategy matters at all."),
 ]
 for i, (lead, rest) in enumerate(findings):
     p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
@@ -673,7 +731,7 @@ rebuild_labeled_body(sh["Text 2"], [
         "ChromaDB's default dependency required a C++ compiler unavailable on the dev machine — resolved by using ChromaDB's newer Rust-backed release, which ships prebuilt Windows wheels.",
     ]),
     ("Remaining work (25%):", [
-        "Statistical significance / confidence intervals on the observed strategy gaps (not yet computed at n=60).",
+        "Statistical significance / confidence intervals on the observed strategy gaps — two independent n=60 runs already show the accuracy ranking is not stable, which is exactly why this can't be skipped.",
         "A larger-scale run to tighten those confidence intervals.",
         "Final written report and production-scenario recommendations.",
     ]),
