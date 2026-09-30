@@ -70,22 +70,55 @@ FACULTY = {
 }
 
 # ---------------------------------------------------------------------------
-# Literature survey -- 10 references, each verified via web search against
-# arXiv / ACL Anthology / ACM Digital Library during authoring (not
-# recalled from memory alone, given citation accuracy matters for an
-# academic submission).
+# Literature survey -- 10 references in IEEE numbered style. Every author
+# list, venue, year, and page range was verified via WebFetch/WebSearch
+# against the paper's page on arXiv, ACL Anthology, or NeurIPS Proceedings
+# during authoring (not recalled from memory). Page numbers are included
+# only where the venue actually publishes them -- NeurIPS Proceedings does
+# not paginate its papers, so [1], [2], [4], [5] correctly omit pages
+# rather than guess a range.
 # ---------------------------------------------------------------------------
 LITERATURE = [
-    ("Lewis et al. (2020, NeurIPS)", "Introduced Retrieval-Augmented Generation (RAG)"),
-    ("Brown et al. (2020, NeurIPS)", "GPT-3; established few-shot in-context learning"),
-    ("Shuster et al. (2021, EMNLP Findings)", "Retrieval augmentation reduces hallucination in dialogue"),
-    ("Wei et al. (2022, NeurIPS)", "Chain-of-Thought prompting improves multi-step reasoning"),
-    ("Kojima et al. (2022, NeurIPS)", "Zero-shot CoT via “Let’s think step by step”"),
-    ("Liu et al. (2023, ACM Comput. Surv.)", "Systematic survey of prompting methods in NLP"),
-    ("Ji et al. (2023, ACM Comput. Surv.)", "Survey of hallucination in natural language generation"),
-    ("Gao et al. (2023, arXiv survey)", "Survey of RAG techniques for large language models"),
-    ("Es et al. (2024, EACL)", "RAGAS: reference-free evaluation metrics for RAG"),
-    ("Niu et al. (2024, ACL)", "RAGTruth: hallucination corpus used as this project’s dataset"),
+    "P. Lewis et al., “Retrieval-augmented generation for knowledge-intensive "
+    "NLP tasks,” in Advances in Neural Information Processing Systems 33 "
+    "(NeurIPS 2020), 2020.",
+
+    "T. B. Brown et al., “Language models are few-shot learners,” in Advances "
+    "in Neural Information Processing Systems 33 (NeurIPS 2020), 2020.",
+
+    "K. Shuster, S. Poff, M. Chen, D. Kiela, and J. Weston, “Retrieval "
+    "augmentation reduces hallucination in conversation,” in Findings of the "
+    "Association for Computational Linguistics: EMNLP 2021, Punta Cana, "
+    "Dominican Republic, Nov. 2021, pp. 3784–3803.",
+
+    "J. Wei et al., “Chain-of-thought prompting elicits reasoning in large "
+    "language models,” in Advances in Neural Information Processing Systems "
+    "35 (NeurIPS 2022), 2022.",
+
+    "T. Kojima, S. S. Gu, M. Reid, Y. Matsuo, and Y. Iwasawa, “Large language "
+    "models are zero-shot reasoners,” in Advances in Neural Information "
+    "Processing Systems 35 (NeurIPS 2022), 2022.",
+
+    "P. Liu, W. Yuan, J. Fu, Z. Jiang, H. Hayashi, and G. Neubig, “Pre-train, "
+    "prompt, and predict: A systematic survey of prompting methods in "
+    "natural language processing,” ACM Computing Surveys, vol. 55, no. 9, "
+    "pp. 1–35, Jan. 2023.",
+
+    "Z. Ji et al., “Survey of hallucination in natural language generation,” "
+    "ACM Computing Surveys, vol. 55, no. 12, 2023.",
+
+    "Y. Gao et al., “Retrieval-augmented generation for large language "
+    "models: A survey,” arXiv preprint arXiv:2312.10997, Dec. 2023.",
+
+    "S. Es, J. James, L. Espinosa-Anke, and S. Schockaert, “RAGAS: Automated "
+    "evaluation of retrieval augmented generation,” in Proc. 18th Conf. "
+    "European Chapter Assoc. Comput. Linguistics: System Demonstrations "
+    "(EACL), St. Julian’s, Malta, Mar. 2024, pp. 150–158.",
+
+    "C. Niu et al., “RAGTruth: A hallucination corpus for developing "
+    "trustworthy retrieval-augmented language models,” in Proc. 62nd Annual "
+    "Meeting Assoc. Comput. Linguistics (ACL), Vol. 1: Long Papers, Bangkok, "
+    "Thailand, Aug. 2024, pp. 10862–10878.",
 ]
 
 prs = Presentation()
@@ -308,6 +341,29 @@ def make_table(slide, left, top, w, h, col_widths, header, rows_data, font_size=
     return tbl
 
 
+def add_citation_list(slide, left, top, width, height, citations, start_no=1,
+                       size=10.5, gap_pt=10, line_spacing=1.05):
+    """IEEE-numbered citation list in a plain auto-flowing textbox -- each
+    paragraph is '[n]  citation text' with the bracket bold/navy. A plain
+    textbox (unlike a table row) never clips wrapped text to a fixed
+    height, so this is the same safe pattern as add_bullets()."""
+    box = slide.shapes.add_textbox(left, top, width, height)
+    tf = box.text_frame
+    tf.word_wrap = True
+    tf.margin_left = 0; tf.margin_right = 0; tf.margin_top = 0; tf.margin_bottom = 0
+    for i, citation in enumerate(citations):
+        p = tf.paragraphs[0] if i == 0 else tf.add_paragraph()
+        p.line_spacing = line_spacing
+        p.space_after = Pt(gap_pt)
+        r0 = p.add_run()
+        r0.text = f"[{start_no + i}]  "
+        r0.font.size = Pt(size); r0.font.bold = True; r0.font.name = MONO; r0.font.color.rgb = NAVY
+        r1 = p.add_run()
+        r1.text = citation
+        r1.font.size = Pt(size); r1.font.name = SANS; r1.font.color.rgb = INK_SOFT
+    return box
+
+
 # ===========================================================================
 # SLIDE 1 -- Title (signed & scanned)
 # ===========================================================================
@@ -381,18 +437,14 @@ add_footer(s, 2)
 
 
 # ===========================================================================
-# SLIDE 3 -- Literature Survey (10 references)
+# SLIDE 3 -- Literature Survey (10 references, IEEE numbered style)
 # ===========================================================================
 s = add_slide()
 add_header(s, "02 · Literature Survey", "Ten references spanning RAG, prompting, and hallucination evaluation")
 
-lit_rows = [(str(i + 1), ref, contrib) for i, (ref, contrib) in enumerate(LITERATURE)]
-make_table(
-    s, Inches(0.6), Inches(2.05), Inches(12.1), Inches(4.35),
-    [Inches(0.5), Inches(3.7), Inches(7.9)],
-    ["#", "Reference", "Key Contribution"],
-    lit_rows, font_size=11, header_size=12,
-)
+half = len(LITERATURE) // 2  # 5 + 5, split across two columns
+add_citation_list(s, Inches(0.6), Inches(2.05), Inches(5.85), Inches(4.7), LITERATURE[:half], start_no=1)
+add_citation_list(s, Inches(6.75), Inches(2.05), Inches(5.85), Inches(4.7), LITERATURE[half:], start_no=half + 1)
 add_footer(s, 3)
 
 
